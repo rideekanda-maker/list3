@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rideekanda Forest Monastery - Wish List</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f0 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .tab-button {
+            padding: 12px 30px;
+            font-size: 1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: white;
+            color: #2c3e50;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .tab-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .wishlist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .wishlist-item {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .wishlist-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .item-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+
+        .item-content {
+            padding: 20px;
+        }
+
+        .item-description {
+            font-size: 1.1em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .item-details {
+            display: grid;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .detail-label {
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .total-price {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .admin-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .admin-form {
+            display: grid;
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .form-input, .form-textarea {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-button {
+            padding: 12px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1em;
+            transition: background 0.3s ease;
+        }
+
+        .file-input-button:hover {
+            background: #2980b9;
+        }
+
+        .file-input {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .image-preview {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .submit-button {
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .delete-button {
+            padding: 10px 20px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s ease;
+        }
+
+        .delete-button:hover {
+            background: #c0392b;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+        }
+
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .summary-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .summary-title {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+        }
+
+        .summary-amount {
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .wishlist-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .tab-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function App() {
+            const [activeTab, setActiveTab] = useState('wishlist');
+            const [items, setItems] = useState([]);
+            const [formData, setFormData] = useState({
+                description: '',
+                image: '',
+                quantity: '',
+                unitPrice: ''
+            });
+            const [imagePreview, setImagePreview] = useState('');
+
+            // Load items from localStorage on mount
+            useEffect(() => {
+                const savedItems = localStorage.getItem('monasteryWishlist');
+                if (savedItems) {
+                    setItems(JSON.parse(savedItems));
+                }
+            }, []);
+
+            // Save items to localStorage whenever they change
+            useEffect(() => {
+                localStorage.setItem('monasteryWishlist', JSON.stringify(items));
+            }, [items]);
+
+            const handleInputChange = (e) => {
+                const { name, value } = e.target;
+                setFormData(prev => ({
+                    ...prev,
+                    [name]: value
+                }));
+            };
+
+            const handleImageUpload = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        setFormData(prev => ({
+                            ...prev,
+                            image: reader.result
+                        }));
+                        setImagePreview(reader.result);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                
+                if (!formData.description || !formData.quantity || !formData.unitPrice) {
+                    alert('Please fill in all required fields');
+                    return;
+                }
+
+                const newItem = {
+                    id: Date.now(),
+                    description: formData.description,
+                    image: formData.image || 'https://via.placeholder.com/400x300?text=No+Image',
+                    quantity: parseFloat(formData.quantity),
+                    unitPrice: parseFloat(formData.unitPrice),
+                    totalPrice: parseFloat(formData.quantity) * parseFloat(formData.unitPrice)
+                };
+
+                setItems(prev => [...prev, newItem]);
+                
+                // Reset form
+                setFormData({
+                    description: '',
+                    image: '',
+                    quantity: '',
+                    unitPrice: ''
+                });
+                setImagePreview('');
+                
+                alert('Item added successfully!');
+            };
+
+            const handleDelete = (id) => {
+                if (window.confirm('Are you sure you want to delete this item?')) {
+                    setItems(prev => prev.filter(item => item.id !== id));
+                }
+            };
+
+            const calculateTotalAmount = () => {
+                return items.reduce((sum, item) => sum + item.totalPrice, 0);
+            };
+
+            const formatCurrency = (amount) => {
+                return new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'LKR',
+                    minimumFractionDigits: 2
+                }).format(amount).replace('LKR', 'Rs.');
+            };
+
+            return (
+                <div className="container">
+                    <div className="header">
+                        <h1>🙏 Rideekanda Forest Monastery</h1>
+                        <p>Wish List - Items Needed for the Monastery</p>
+                    </div>
+
+                    <div className="tab-buttons">
+                        <button 
+                            className={`tab-button ${activeTab === 'wishlist' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('wishlist')}
+                        >
+                            📋 Wish List
+                        </button>
+                        <button 
+                            className={`tab-button ${activeTab === 'admin' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('admin')}
+                        >
+                            ⚙️ Admin Panel
+                        </button>
+                    </div>
+
+                    {activeTab === 'wishlist' && (
+                        <>
+                            {items.length > 0 && (
+                                <div className="summary-section">
+                                    <div className="summary-title">Total Approximate Cost</div>
+                                    <div className="summary-amount">{formatCurrency(calculateTotalAmount())}</div>
+                                </div>
+                            )}
+
+                            {items.length === 0 ? (
+                                <div className="empty-state">
+                                    <div className="empty-state-icon">📦</div>
+                                    <h2>No items in the wish list yet</h2>
+                                    <p>Use the Admin Panel to add items</p>
+                                </div>
+                            ) : (
+                                <div className="wishlist-grid">
+                                    {items.map(item => (
+                                        <div key={item.id} className="wishlist-item">
+                                            <img 
+                                                src={item.image} 
+                                                alt={item.description}
+                                                className="item-image"
+                                            />
+                                            <div className="item-content">
+                                                <div className="item-description">{item.description}</div>
+                                                <div className="item-details">
+                                                    <div className="detail-row">
+                                                        <span className="detail-label">Quantity:</span>
+                                                        <span className="detail-value">{item.quantity}</span>
+                                                    </div>
+                                                    <div className="detail-row">
+                                                        <span className="detail-label">Unit Price:</span>
+                                                        <span className="detail-value">{formatCurrency(item.unitPrice)}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="total-price">
+                                                    Total: {formatCurrency(item.totalPrice)}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </>
+                    )}
+
+                    {activeTab === 'admin' && (
+                        <div className="admin-panel">
+                            <h2 style={{ textAlign: 'center', marginBottom: '30px', color: '#2c3e50' }}>
+                                Add New Item
+                            </h2>
+                            
+                            <form onSubmit={handleSubmit} className="admin-form">
+                                <div className="form-group">
+                                    <label className="form-label">Item Description *</label>
+                                    <textarea
+                                        className="form-textarea"
+                                        name="description"
+                                        value={formData.description}
+                                        onChange={handleInputChange}
+                                        placeholder="Enter item description..."
+                                        required
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">Upload Image</label>
+                                    <div className="file-input-wrapper">
+                                        <button type="button" className="file-input-button">
+                                            Choose Image
+                                        </button>
+                                        <input
+                                            type="file"
+                                            className="file-input"
+                                            accept="image/*"
+                                            onChange={handleImageUpload}
+                                        />
+                                    </div>
+                                    {imagePreview && (
+                                        <img src={imagePreview} alt="Preview" className="image-preview" />
+                                    )}
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">Quantity *</label>
+                                    <input
+                                        type="number"
+                                        className="form-input"
+                                        name="quantity"
+                                        value={formData.quantity}
+                                        onChange={handleInputChange}
+                                        placeholder="Enter quantity"
+                                        min="0"
+                                        step="0.01"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">Unit Price (Approx.) *</label>
+                                    <input
+                                        type="number"
+                                        className="form-input"
+                                        name="unitPrice"
+                                        value={formData.unitPrice}
+                                        onChange={handleInputChange}
+                                        placeholder="Enter approximate unit price in Rs."
+                                        min="0"
+                                        step="0.01"
+                                        required
+                                    />
+                                </div>
+
+                                <button type="submit" className="submit-button">
+                                    ➕ Add Item to Wish List
+                                </button>
+                            </form>
+
+                            <h2 style={{ textAlign: 'center', marginBottom: '30px', marginTop: '50px', color: '#2c3e50' }}>
+                                Manage Items
+                            </h2>
+
+                            {items.length === 0 ? (
+                                <div className="empty-state">
+                                    <p>No items to manage</p>
+                                </div>
+                            ) : (
+                                <div className="wishlist-grid">
+                                    {items.map(item => (
+                                        <div key={item.id} className="wishlist-item">
+                                            <img 
+                                                src={item.image} 
+                                                alt={item.description}
+                                                className="item-image"
+                                            />
+                                            <div className="item-content">
+                                                <div className="item-description">{item.description}</div>
+                                                <div className="item-details">
+                                                    <div className="detail-row">
+                                                        <span className="detail-label">Quantity:</span>
+                                                        <span className="detail-value">{item.quantity}</span>
+                                                    </div>
+                                                    <div className="detail-row">
+                                                        <span className="detail-label">Unit Price:</span>
+                                                        <span className="detail-value">{formatCurrency(item.unitPrice)}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="total-price">
+                                                    Total: {formatCurrency(item.totalPrice)}
+                                                </div>
+                                                <button 
+                                                    onClick={() => handleDelete(item.id)}
+                                                    className="delete-button"
+                                                    style={{ marginTop: '15px', width: '100%' }}
+                                                >
+                                                    🗑️ Delete Item
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
